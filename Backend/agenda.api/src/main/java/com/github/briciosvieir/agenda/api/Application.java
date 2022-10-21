@@ -16,16 +16,4 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-
-	@Bean
-	public CommandLineRunner commandLineRunner(@Autowired ContatoRepository repository){
-		return args -> {
-
-			Contato contato = new Contato();
-			contato.setNome("Caio");
-			contato.setEmail("fabricio@email.com");
-			contato.setFavorito(false);
-			repository.save(contato);
-		};
-	}
 }
