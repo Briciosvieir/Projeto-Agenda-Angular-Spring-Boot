@@ -1,18 +1,77 @@
-<mat-toolbar>Contatos</mat-toolbar>
+<mat-toolbar>
+    <mat-icon>account_circle </mat-icon>
+    Contatos
+</mat-toolbar>
 
-<form [formGroup]="formulario" (ngSubmit)="submit()">
+<mat-tab-group>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>list</mat-icon>
+            Todos
+        </ng-template>
 
-    <mat-form-field class="full-width">
-        <mat-label>Nome:</mat-label>
-        <input formControlName="nome" matInput placeholder="Digite seu nome">
-    </mat-form-field>
+        <mat-card>
+
+            <table mat-table [dataSource]="contatos" class="full-width">
+
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef> ID </th>
+                    <td mat-cell *matCellDef="let contato"> {{contato.id}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="nome">
+                    <th mat-header-cell *matHeaderCellDef> Nome </th>
+                    <td mat-cell *matCellDef="let contato"> {{contato.nome}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef> Email </th>
+                    <td mat-cell *matCellDef="let contato"> {{contato.email}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="favorito">
+                    <th mat-header-cell *matHeaderCellDef> Favorito </th>
+                    <td mat-cell *matCellDef="let contato">
+
+                        <a href="#" (click)="favoritar(contato)">
+                            <mat-icon> {{contato.favorito ? 'favorite': 'favorite_border' }}</mat-icon>
+                        </a>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+                <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+
+            </table>
+        </mat-card>
+    </mat-tab>
 
 
-    <mat-form-field class="full-width">
-        <mat-label>Email:</mat-label>
-        <input formControlName="email" matInput placeholder="Digite seu nome">
-    </mat-form-field>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>face</mat-icon>
+            Novo
+        </ng-template>
 
-    <button mat-button color="primary">Adicionar</button>
+        <mat-card class="half-width-field">
+            <mat-card-title>Novo Contato</mat-card-title>
 
-</form>
+            <form [formGroup]="formulario" (ngSubmit)="submit()">
+
+                <mat-form-field class="full-width-field">
+                    <mat-label>Nome:</mat-label>
+                    <input formControlName="nome" matInput placeholder="Digite seu nome">
+                </mat-form-field>
+
+
+                <mat-form-field class="full-width-field">
+                    <mat-label>Email:</mat-label>
+                    <input formControlName="email" matInput placeholder="Digite seu nome">
+                </mat-form-field>
+
+                <button [disabled]="!formulario.valid" mat-raised-button color="primary">Adicionar</button>
+
+            </form>
+        </mat-card>
+    </mat-tab>
+</mat-tab-group>
