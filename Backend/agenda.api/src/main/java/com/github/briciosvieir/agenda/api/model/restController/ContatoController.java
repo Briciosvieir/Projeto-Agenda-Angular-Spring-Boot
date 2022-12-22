@@ -3,9 +3,15 @@ package com.github.briciosvieir.agenda.api.model.restController;
 import com.github.briciosvieir.agenda.api.model.entity.Contato;
 import com.github.briciosvieir.agenda.api.model.repository.ContatoRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +38,12 @@ public class ContatoController {
 
 
     @GetMapping
-    public List<Contato> list(){
-        return repository.findAll();
+    public Page<Contato> list(
+            @RequestParam(value="page", defaultValue = "0") Integer pagina,
+            @RequestParam(value = "size", defaultValue = "10") Integer tamanoPagina
+    ){
+       PageRequest pageRequest = PageRequest.of(pagina, tamanoPagina);
+        return repository.findAll(pageRequest);
     }
 
 
@@ -45,6 +55,26 @@ public class ContatoController {
             c.setFavorito(!favorito);
             repository.save(c);
         });
+
+    }
+
+    @PutMapping("{id}/foto")
+    public byte[] addphoto(@PathVariable Integer id,
+                            @RequestParam("foto") Part arquivo){
+        Optional<Contato> contato = repository.findById(id);
+        return contato.map(c ->{
+            try {
+                InputStream is = arquivo.getInputStream();
+                byte[] bytes = new byte[(int) arquivo.getSize()];
+                IOUtils.readFully(is, bytes);
+                c.setFoto(bytes);
+                repository.save(c);
+                is.close();
+                return bytes;
+            } catch (IOException e){
+                return null;
+            }
+        }).orElse(null);
 
     }
 }

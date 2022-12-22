@@ -3,6 +3,7 @@ export class Contato{
     nome:string | undefined;
     email:string | undefined;
     favorito:boolean | undefined;
+    foto:any;
 
 
     constructor(nome:string, email:string){
